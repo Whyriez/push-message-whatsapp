@@ -41,6 +41,11 @@ async function setupWhatsAppClient() {
     // Initialize the client
     await client.initialize();
 
+    const generateQRCode = async (qr) => {
+      const qrCodeDataUrl = await qrcode.toDataURL(qr);
+      return qrCodeDataUrl;
+    };
+
     console.log("WhatsApp Client initialized successfully.");
   } catch (error) {
     console.error("Error setting up WhatsApp client:", error);
@@ -48,11 +53,6 @@ async function setupWhatsAppClient() {
 }
 
 setupWhatsAppClient();
-
-const generateQRCode = async (qr) => {
-  const qrCodeDataUrl = await qrcode.toDataURL(qr);
-  return qrCodeDataUrl;
-};
 
 // Function to get QR code data URL
 export const getQRCode = async (req, res) => {
