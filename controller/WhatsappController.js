@@ -11,7 +11,7 @@ client = new WhatsAppClient({
       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
   },
   puppeteer: {
-    executablePath: await WhatsAppClient.executablePath,
+    executablePath: "./node_modules/chromium/lib/chromium/chrome-linux/chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   },
 });
