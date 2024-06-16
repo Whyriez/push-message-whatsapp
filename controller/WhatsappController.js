@@ -13,7 +13,6 @@ client = new WhatsAppClient({
   puppeteer: {
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   },
-  session: null,
 });
 
 // Event listener for QR code
