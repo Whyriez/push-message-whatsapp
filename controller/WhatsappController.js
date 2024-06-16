@@ -4,40 +4,50 @@ import qrcode from "qrcode";
 
 let client;
 
-// Initialize WhatsApp Client
-client = new WhatsAppClient({
-  webVersionCache: {
-    type: "remote",
-    remotePath:
-      "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
-  },
-  puppeteer: {
-    executablePath: await chromium.executablePath,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  },
-});
-
-// Event listener for QR code
-// client.on("qr", (qr) => {
-//   qrcode.generate(qr, { small: true });
-// });
-client.on("qr", async (qr) => {
+async function setupWhatsAppClient() {
   try {
-    const qrCodeDataUrl = await generateQRCode(qr);
-    client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
-    console.log("QR code generated.");
+    const executablePath = await chromium.executablePath;
+
+    // Initialize WhatsApp Client
+    client = new WhatsAppClient({
+      webVersionCache: {
+        type: "remote",
+        remotePath:
+          "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
+      },
+      puppeteer: {
+        executablePath,
+        args: chromium.args,
+        headless: true,
+      },
+    });
+
+    // Event listener for QR code
+    client.on("qr", async (qr) => {
+      try {
+        const qrCodeDataUrl = await generateQRCode(qr);
+        client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
+        console.log("QR code generated.");
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    });
+
+    // Event listener when client is ready
+    client.on("ready", () => {
+      console.log("WhatsApp Client is ready!");
+    });
+
+    // Initialize the client
+    await client.initialize();
+
+    console.log("WhatsApp Client initialized successfully.");
   } catch (error) {
-    console.error("Error generating QR code:", error);
+    console.error("Error setting up WhatsApp client:", error);
   }
-});
+}
 
-// Event listener when client is ready
-client.on("ready", () => {
-  console.log("WhatsApp Client is ready!");
-});
-
-// Initialize the client
-client.initialize();
+setupWhatsAppClient();
 
 const generateQRCode = async (qr) => {
   const qrCodeDataUrl = await qrcode.toDataURL(qr);
