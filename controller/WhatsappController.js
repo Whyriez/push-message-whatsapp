@@ -16,8 +16,10 @@ async function setupWhatsAppClient() {
           "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
       },
       puppeteer: {
+        args: chromium.args,
         executablePath,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
       },
     });
 
