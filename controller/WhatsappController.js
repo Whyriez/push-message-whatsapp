@@ -3,6 +3,7 @@ import chromium from "chrome-aws-lambda";
 import qrcode from "qrcode";
 
 let client;
+let qrCodePromise; // Promise to track QR code generation
 
 async function setupWhatsAppClient() {
   try {
@@ -25,14 +26,18 @@ async function setupWhatsAppClient() {
     });
 
     // Event listener for QR code
-    client.on("qr", async (qr) => {
-      try {
-        const qrCodeDataUrl = await generateQRCode(qr);
-        client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
-        console.log("QR code generated.");
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-      }
+    qrCodePromise = new Promise(async (resolve, reject) => {
+      client.on("qr", async (qr) => {
+        try {
+          const qrCodeDataUrl = await generateQRCode(qr);
+          client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
+          console.log("QR code generated.");
+          resolve(); // Resolve the promise once QR code is generated
+        } catch (error) {
+          console.error("Error generating QR code:", error);
+          reject(error); // Reject promise if there's an error generating QR code
+        }
+      });
     });
 
     // Event listener when client is ready
@@ -64,6 +69,9 @@ const generateQRCode = async (qr) => {
 // Function to get QR code data URL
 export const getQRCode = async (req, res) => {
   try {
+    // Wait for QR code to be generated
+    await qrCodePromise;
+
     if (!client || !client.qrCodeDataUrl) {
       throw new Error("QR Code not available yet.");
     }
