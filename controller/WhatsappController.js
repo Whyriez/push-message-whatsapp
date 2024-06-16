@@ -6,6 +6,8 @@ let client;
 
 async function setupWhatsAppClient() {
   try {
+    const executablePath = await chromium.executablePath;
+
     // Initialize WhatsApp Client
     client = new WhatsAppClient({
       webVersionCache: {
@@ -14,9 +16,9 @@ async function setupWhatsAppClient() {
           "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
       },
       puppeteer: {
+        executablePath,
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath,
         headless: true,
         ignoreHTTPSErrors: true,
       },
@@ -41,11 +43,6 @@ async function setupWhatsAppClient() {
     // Initialize the client
     await client.initialize();
 
-    const generateQRCode = async (qr) => {
-      const qrCodeDataUrl = await qrcode.toDataURL(qr);
-      return qrCodeDataUrl;
-    };
-
     console.log("WhatsApp Client initialized successfully.");
   } catch (error) {
     console.error("Error setting up WhatsApp client:", error);
@@ -53,6 +50,16 @@ async function setupWhatsAppClient() {
 }
 
 setupWhatsAppClient();
+
+const generateQRCode = async (qr) => {
+  try {
+    const qrCodeDataUrl = await qrcode.toDataURL(qr);
+    return qrCodeDataUrl;
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    throw error; // Re-throw error to handle it in calling function
+  }
+};
 
 // Function to get QR code data URL
 export const getQRCode = async (req, res) => {
