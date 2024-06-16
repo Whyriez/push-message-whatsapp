@@ -10,10 +10,10 @@ client = new WhatsAppClient({
     remotePath:
       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
   },
-  puppeteer: {
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  },
-  session: null,
+  //   puppeteer: {
+  //     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  //   },
+  //   session: null,
 });
 
 // Event listener for QR code
