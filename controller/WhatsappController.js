@@ -17,8 +17,7 @@ async function setupWhatsAppClient() {
       },
       puppeteer: {
         executablePath,
-        args: chromium.args,
-        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       },
     });
 
