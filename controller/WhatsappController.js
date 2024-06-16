@@ -1,4 +1,5 @@
 import { Client as WhatsAppClient } from "whatsapp-web.js";
+import chromium from "chrome-aws-lambda";
 import qrcode from "qrcode";
 
 let client;
@@ -11,7 +12,7 @@ client = new WhatsAppClient({
       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
   },
   puppeteer: {
-    executablePath: "./node_modules/chromium/lib/chromium/chrome-linux/chrome",
+    executablePath: await chromium.executablePath,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   },
 });
