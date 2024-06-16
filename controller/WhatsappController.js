@@ -56,6 +56,7 @@ export const getQRCode = async (req, res) => {
   }
 };
 
+// Function to send WhatsApp message
 export const sendMessage = async (req, res) => {
   const { to, message } = req.body;
 
