@@ -1,6 +1,7 @@
 import { Client as WhatsAppClient } from "whatsapp-web.js";
 import chromium from "chrome-aws-lambda";
 import qrcode from "qrcode";
+import puppeteer from "puppeteer";
 
 let client;
 let qrCodePromise; // Promise to track QR code generation
@@ -10,6 +11,18 @@ async function setupWhatsAppClient() {
     const executablePath = await chromium.executablePath;
     console.log("Chromium executable path:", executablePath);
 
+    const browser = await puppeteer.launch({
+      args: [
+        "--hide-scrollbars",
+        "--disable-web-security",
+        "--disable-dev-shm-usage",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+      ],
+      headless: true,
+      ignoreHTTPSErrors: true,
+    });
+
     // Initialize WhatsApp Client
     client = new WhatsAppClient({
       webVersionCache: {
@@ -18,18 +31,7 @@ async function setupWhatsAppClient() {
           "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
       },
       puppeteer: {
-        executablePath,
-        args: [
-          ...chromium.args,
-          "--hide-scrollbars",
-          "--disable-web-security",
-          "--disable-dev-shm-usage",
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-        ],
-        defaultViewport: chromium.defaultViewport,
-        headless: true,
-        ignoreHTTPSErrors: true,
+        browserWSEndpoint: await browser.wsEndpoint(),
       },
     });
 
