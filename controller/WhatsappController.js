@@ -79,8 +79,12 @@ const generateQRCode = async (qr) => {
 // Function to get QR code data URL
 export const getQRCode = async (req, res) => {
   try {
-    // Wait for QR code to be generated
+    console.log("Waiting for QR code to be generated...");
     await qrCodePromise;
+    console.log("QR Code promise resolved.");
+
+    // Optional: Add a small delay to ensure QR code is available
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (!client || !client.qrCodeDataUrl) {
       throw new Error("QR Code not available yet.");
