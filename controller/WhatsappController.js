@@ -8,6 +8,7 @@ let qrCodePromise; // Promise to track QR code generation
 async function setupWhatsAppClient() {
   try {
     const executablePath = await chromium.executablePath;
+    console.log("Chromium executable path:", executablePath);
 
     // Initialize WhatsApp Client
     client = new WhatsAppClient({
@@ -33,13 +34,13 @@ async function setupWhatsAppClient() {
     });
 
     // Event listener for QR code
-    qrCodePromise = new Promise(async (resolve, reject) => {
+    qrCodePromise = new Promise((resolve, reject) => {
       client.on("qr", async (qr) => {
-        console.log("QR code received:", qr); // Tambahkan log ini
+        console.log("QR code received:", qr);
         try {
           const qrCodeDataUrl = await generateQRCode(qr);
           client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
-          console.log("QR code generated.");
+          console.log("QR code generated:", qrCodeDataUrl);
           resolve(); // Resolve the promise once QR code is generated
         } catch (error) {
           console.error("Error generating QR code:", error);
@@ -55,7 +56,6 @@ async function setupWhatsAppClient() {
 
     // Initialize the client
     await client.initialize();
-
     console.log("WhatsApp Client initialized successfully.");
   } catch (error) {
     console.error("Error setting up WhatsApp client:", error);
