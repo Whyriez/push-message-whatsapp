@@ -18,7 +18,14 @@ async function setupWhatsAppClient() {
       },
       puppeteer: {
         executablePath,
-        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        args: [
+          ...chromium.args,
+          "--hide-scrollbars",
+          "--disable-web-security",
+          "--disable-dev-shm-usage",
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+        ],
         defaultViewport: chromium.defaultViewport,
         headless: true,
         ignoreHTTPSErrors: true,
@@ -28,6 +35,7 @@ async function setupWhatsAppClient() {
     // Event listener for QR code
     qrCodePromise = new Promise(async (resolve, reject) => {
       client.on("qr", async (qr) => {
+        console.log("QR code received:", qr); // Tambahkan log ini
         try {
           const qrCodeDataUrl = await generateQRCode(qr);
           client.qrCodeDataUrl = qrCodeDataUrl; // Store QR code data URL for future requests
@@ -58,7 +66,9 @@ setupWhatsAppClient();
 
 const generateQRCode = async (qr) => {
   try {
+    console.log("Generating QR code for:", qr); // Tambahkan log ini
     const qrCodeDataUrl = await qrcode.toDataURL(qr);
+    console.log("QR code data URL:", qrCodeDataUrl); // Tambahkan log ini
     return qrCodeDataUrl;
   } catch (error) {
     console.error("Error generating QR code:", error);
